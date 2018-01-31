@@ -1,0 +1,61 @@
+<!--
+  James' 3d Demos Package
+  Copyright (C) 2018 James Heggie
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+
+  <title>Perspective Projection Equation</title>
+</head>
+<body>
+
+  <h1>Demonstrating the Perspective Projection Equation</h1>
+
+  <canvas id="canvas" width="600" height="600"></canvas>
+
+  <div id="text">
+
+    <h2>How to explore this demo</h2>
+    <p>Two files are important:</p>
+    <ol>
+      <li>js/main.js – this is the file that sets up the animation</li>
+      <li>js/renderer.js – this is the file that does the actual 3d animation</li>
+    </ol>
+    <p>You can (and probably should!) ignore the rest of the files. These two
+    files are heavily commented so dive in for more information.</p>
+
+    <h2>Libraries used by this demo</h2>
+    <p>This demo uses 2 libraries:</p>
+    <ol>
+      <li>RequireJS (http://requirejs.org/)<br>
+      <em>Really useful for writing nice, organised Javascript</em></li>
+      <li>glMatrix (http://glmatrix.net/)
+      <em>Provides all the vector and matrix maths operations you could desire and
+      works in a way that plays nicely with WebGL (should you want to explore
+      that)</em></li>
+    <ol>
+
+  </div>
+
+  <script src="cordova.js"></script>
+  <script src="lib/requirejs/require.js" data-main="js/bootstrap.js"></script>
+</body>
+</html>
