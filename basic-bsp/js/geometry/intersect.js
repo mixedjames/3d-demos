@@ -17,27 +17,24 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([
+  'geometry/intersect.lines',
+  'geometry/intersect.multipleLines'
+], function(IntersectionOfLines, IntersectionOfMultipleLines) {
 
-requirejs.config({
-  baseUrl: 'js',
+  function IntersectionsToPoints(intersections) {
+    return intersections.map(function(intersection){
+      return intersection.point;
+    });
+  }
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+  return {
 
-requirejs([
-],
-function() {
+    Lines: IntersectionOfLines,
+    MultipleLines: IntersectionOfMultipleLines,
 
-  require(['main']);
+    IntersectionsToPoints: IntersectionsToPoints
+
+  };
 
 });

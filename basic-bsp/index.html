@@ -1,0 +1,66 @@
+<!--
+  James' 3d Demos Package
+  Copyright (C) 2018 James Heggie
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+
+  <title></title>
+</head>
+<body>
+
+  <h1>Building a BSP tree &amp; using it to draw a scene</h1>
+
+  <canvas width="600" height="600" id="editor"></canvas>
+
+  <div id="text">
+
+  <h2>Controls</h2>
+  <p>
+    Editor mode:<br>
+    <button id="edit-map">Edit Map</button>
+    <button id="edit-bsp">Edit BSP</button>
+    <button id="render">Render</button>
+  </p>
+
+  <p id="map-editor-settings">
+    Map editing settings:<br>
+    <button id="create-rects">Create Rects</button>
+    <button id="delete-rects">Delete Rects</button>
+  </p>
+
+  <p id="bsp-editor-settings">
+    BSP editing settings:<br>
+    <button id="reset-bsp">Reset</button>
+    <button id="build-bsp">Build</button>
+  </p>
+
+  <p id="render-settings">
+    Render settings:<br>
+  </p>
+
+  </div>
+
+  <script src="cordova.js"></script>
+  <script src="lib/requirejs/require.js" data-main="js/bootstrap.js"></script>
+</body>
+</html>

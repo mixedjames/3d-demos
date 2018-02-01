@@ -17,27 +17,26 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([
+], function(){
 
-requirejs.config({
-  baseUrl: 'js',
+  function NullTool() {
+  }
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+  NullTool.prototype = {
+    Start: function(e) {
+      console.log('NullTool started');
+    },
 
-requirejs([
-],
-function() {
+    MouseMoved: function(e) {
+    },
 
-  require(['main']);
+    MouseReleased: function(e) {
+    },
 
+    Stop: function() {
+    }
+  };
+
+  return NullTool;
 });

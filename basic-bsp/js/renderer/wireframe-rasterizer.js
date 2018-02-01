@@ -18,11 +18,11 @@
 */
 
 /**
- * renderer.js is a module for rendering 3d lines to a <canvas> element.
+ * WireframeRasterizer.js is a module for rendering 3d lines to a <canvas> element.
  *
  * Usage:
  *   let c = document.getElementById('id-of-my-canvas-element');
- *   let r = new Renderer(c);
+ *   let r = new WireframeRasterizer(c);
  *
  *   r.Clear();
  *   r.DrawPolyLine([0,0,1, 1,1,1]);
@@ -37,7 +37,8 @@
 
 define([
   'glMatrix',
-], function(glMatrix){
+  'renderer/clip-poly-line'
+], function(glMatrix, ClipPolyLine){
 
   // We use 3-component vectors & 4x4 matrices from the 
   // very excellent glMatrix library
@@ -45,14 +46,14 @@ define([
   const vec3 = glMatrix.vec3;
   const mat4 = glMatrix.mat4;
 
-  function Renderer(target) {
+  function WireframeRasterizer(target) {
     this.target_ = target;
     this.g_ = target.getContext('2d');
 
     this.transform = mat4.create();
   }
 
-  Renderer.prototype = {
+  WireframeRasterizer.prototype = {
 
     /**
      * Clears the canvas
@@ -86,35 +87,45 @@ define([
       const transformedCoords = polyline.slice();
       vec3.forEach(transformedCoords, 0, 0, 0, vec3.transformMat4, transform);
 
-      // Step 2: perform the perspective transformation
+      // Step 2: clip the line to the near z plane
       //
-      vec3.forEach(transformedCoords, 0, 0, 0, function(out, a) {
+      const lines = ClipPolyLine(transformedCoords);
 
-        // Step 2a: divide each x & y coordinate by the z coordinate
-        //          * this is the magic step! *
-        //
-        out[0] = a[0] / a[2];
-        out[1] = a[1] / a[2];
+      // Step 3: perform the perspective transformation
+      //
+      lines.forEach(function(line){
+        vec3.forEach(line, 0, 0, 0, function(out, a) {
 
-        // Step 2b: adjust the coordinates to fit the canvas size nicely
-        //          * not directly related to perspective - don't worry about
-        //            this bit too much *
-        //
-        out[0] = out[0] * canvas.height/2 + canvas.width/2;
-        out[1] = -out[1] * canvas.height/2 + canvas.height/2;
+          // Step 2a: divide each x & y coordinate by the z coordinate
+          //          * this is the magic step! *
+          //
+          out[0] = a[0] / a[2];
+          out[1] = a[1] / a[2];
+
+          // Step 2b: adjust the coordinates to fit the canvas size nicely
+          //          * not directly related to perspective - don't worry about
+          //            this bit too much *
+          //
+          out[0] = out[0] * canvas.height/2 + canvas.width/2;
+          out[1] = -out[1] * canvas.height/2 + canvas.height/2;
+        });
       });
 
-      // Step 3: draw the transformed lines on the canvas
+      // Step 4: draw the transformed lines on the canvas
       //
 
       g.beginPath();
-      g.moveTo(transformedCoords[0], transformedCoords[1]);
 
-      for (let i = 3; i < transformedCoords.length; i += 3) {
-        g.lineTo(transformedCoords[i], transformedCoords[i+1]);
-      }
+      lines.forEach(function(line){
+        g.moveTo(line[0], line[1]);
+
+        for (let i = 3; i < line.length; i += 3) {
+          g.lineTo(line[i], line[i+1]);
+        }
+      });
 
       g.stroke();
+
     },
 
     /**
@@ -124,9 +135,32 @@ define([
      */
     DrawPolyLines: function(lines) {
       lines.forEach(this.DrawPolyLine.bind(this));
+    },
+
+    DrawRect: function(r) {
+      const minX = r.xywh[0];
+      const maxX = r.xywh[0] + r.xywh[2];
+      const minY = 0;
+      const maxY = 2;
+      const minZ = r.xywh[1];
+      const maxZ = r.xywh[1] + r.xywh[3];
+
+      const cube = [
+        /* front face */
+        [minX,minY,minZ, minX,maxY,minZ, maxX,maxY,minZ, maxX,minY,minZ, minX,minY,minZ],
+        /* back face */
+        [minX,minY,maxZ, maxX,minY,maxZ, maxX,maxY,maxZ, minX,maxY,maxZ, minX,minY,maxZ],
+        /* sides */
+        [minX,minY,minZ, minX,minY,maxZ],
+        [maxX,minY,minZ, maxX,minY,maxZ],
+        [minX,maxY,minZ, minX,maxY,maxZ],
+        [maxX,maxY,minZ, maxX,maxY,maxZ]
+      ];
+
+      this.DrawPolyLines(cube);
     }
 
   };
 
-  return Renderer;
+  return WireframeRasterizer;
 });

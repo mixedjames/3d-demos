@@ -17,27 +17,34 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([
+  'map'
+], function(Map){
 
-requirejs.config({
-  baseUrl: 'js',
+  function DrawRectTool(editor, OnToolDone) {
+    this.editor_ = editor;
+    this.OnToolDone_ = OnToolDone;
+  }
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+  DrawRectTool.prototype = {
+    Start: function(e) {
+      const xy = this.editor_.view.UserCoordsToView([e.offsetX, e.offsetY]);
+      const rects = this.editor_.map.FindRects(Map.RectContains(xy));
+      this.editor_.map.RemoveRects(rects);
 
-requirejs([
-],
-function() {
+      this.editor_.view.Render();
+    },
 
-  require(['main']);
+    MouseMoved: function(e) {
+    },
 
+    MouseReleased: function(e) {
+      this.OnToolDone_();
+    },
+
+    Stop: function() {
+    }
+  };
+
+  return DrawRectTool;
 });

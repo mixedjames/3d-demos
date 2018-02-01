@@ -17,27 +17,32 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([
+  'geometry/convex-hull-from-lines'
+], function(ConvexHullFromLines) {
 
-requirejs.config({
-  baseUrl: 'js',
+  function IsClockwise(points) {
+    return points.reduce(function(sumSoFar, p, i, points){
+      if (i == 0) {
+        return sumSoFar + (p[0] - points[points.length-1][0])*(p[1] + points[points.length-1][1]);
+      }
+      else {
+        return sumSoFar + (p[0] - points[i-1][0])*(p[1] + points[i-1][1]);
+      }
+    }, 0) < 0;
+  }
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+  function MakeClockwise(hull) {
+    if (!IsClockwise(hull)) { hull.reverse(); }
+    return hull;
+  }
 
-requirejs([
-],
-function() {
+  return {
 
-  require(['main']);
+    IsClockwise: IsClockwise,
+    MakeClockwise: MakeClockwise,
+    FromLines: ConvexHullFromLines
+
+  };
 
 });

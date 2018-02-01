@@ -17,27 +17,30 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([
+  'geometry/intersect.lines'
+], function(IntersectionOfLines) {
 
-requirejs.config({
-  baseUrl: 'js',
+  return function IntersectionOfMultipleLines(lineToClip, clipperLines) {
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+    const intersections = clipperLines.map(function(clipper){
+      return IntersectionOfLines(lineToClip, clipper);
+    });
 
-requirejs([
-],
-function() {
+    const result = intersections.filter(function(intersection) {
 
-  require(['main']);
+      if (intersection) {
+        return clipperLines.every(function(clipper) {
+            return clipper ? clipper.Evaluate(intersection.point) <= 0.001 : false;
+        });
+      }
+      else {
+        return false;
+      }
+
+    });
+
+    return (result.length > 1) ? result : null;
+  };
 
 });

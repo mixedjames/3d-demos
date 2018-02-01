@@ -54,7 +54,7 @@ define([
     angle = dT * 0.1;
 
     mat4.identity(r.transform);
-    mat4.translate(r.transform, r.transform, [0, 0, 5]);
+    mat4.translate(r.transform, r.transform, [0, 0, 0.6]);
     mat4.rotateX(r.transform, r.transform, angle * DEGREES_TO_RADIANS);
 
     r.Clear();

@@ -17,27 +17,24 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([], function() {
 
-requirejs.config({
-  baseUrl: 'js',
+  return function IntersectionOfLines(l1, l2) {
+    var tolerance = 0.000001;
+    var determinant = l1.a*l2.b - l2.a*l1.b;
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+    if (determinant < +tolerance && determinant > -tolerance) {
+      return null;
+    }
+    else {
+      var x = -(l1.c*l2.b - l1.b*l2.c) / determinant;
+      var y = -(l1.a*l2.c - l1.c*l2.a) / determinant;
 
-requirejs([
-],
-function() {
-
-  require(['main']);
+      return {
+        point: [x, y],
+        lines: [l1, l2]
+      };
+    }
+  };
 
 });

@@ -17,27 +17,38 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([],function(){
 
-requirejs.config({
-  baseUrl: 'js',
+  return function NullSort(map, camera, Callback) {
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+    const bsp = map.BSP();
 
-requirejs([
-],
-function() {
+    if (bsp.Empty()) {
+      return;
+    }
 
-  require(['main']);
+    ProcessNode(bsp.Root(), [-camera.xyz[0], -camera.xyz[2]]);
+
+    function ProcessNode(node, xy) {
+      if (node.leaf && node.geometry) {
+        Callback(node.geometry);
+      }
+
+      if (!node.leaf) {
+        const e = node.splitter.Evaluate(xy);
+
+        if (e > 0) {
+          ProcessNode(node.back, xy);
+          ProcessNode(node.front, xy);
+        }
+        else {
+          ProcessNode(node.front, xy);
+          ProcessNode(node.back, xy);
+        }
+      }
+      
+    }
+
+  };
 
 });

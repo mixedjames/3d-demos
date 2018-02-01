@@ -37,7 +37,8 @@
 
 define([
   'glMatrix',
-], function(glMatrix){
+  'clip-poly-line'
+], function(glMatrix, ClipPolyLine){
 
   // We use 3-component vectors & 4x4 matrices from the 
   // very excellent glMatrix library
@@ -86,35 +87,45 @@ define([
       const transformedCoords = polyline.slice();
       vec3.forEach(transformedCoords, 0, 0, 0, vec3.transformMat4, transform);
 
-      // Step 2: perform the perspective transformation
+      // Step 2: clip the line to the near z plane
       //
-      vec3.forEach(transformedCoords, 0, 0, 0, function(out, a) {
+      const lines = ClipPolyLine(transformedCoords);
 
-        // Step 2a: divide each x & y coordinate by the z coordinate
-        //          * this is the magic step! *
-        //
-        out[0] = a[0] / a[2];
-        out[1] = a[1] / a[2];
+      // Step 3: perform the perspective transformation
+      //
+      lines.forEach(function(line){
+        vec3.forEach(line, 0, 0, 0, function(out, a) {
 
-        // Step 2b: adjust the coordinates to fit the canvas size nicely
-        //          * not directly related to perspective - don't worry about
-        //            this bit too much *
-        //
-        out[0] = out[0] * canvas.height/2 + canvas.width/2;
-        out[1] = -out[1] * canvas.height/2 + canvas.height/2;
+          // Step 2a: divide each x & y coordinate by the z coordinate
+          //          * this is the magic step! *
+          //
+          out[0] = a[0] / a[2];
+          out[1] = a[1] / a[2];
+
+          // Step 2b: adjust the coordinates to fit the canvas size nicely
+          //          * not directly related to perspective - don't worry about
+          //            this bit too much *
+          //
+          out[0] = out[0] * canvas.height/2 + canvas.width/2;
+          out[1] = -out[1] * canvas.height/2 + canvas.height/2;
+        });
       });
 
-      // Step 3: draw the transformed lines on the canvas
+      // Step 4: draw the transformed lines on the canvas
       //
 
       g.beginPath();
-      g.moveTo(transformedCoords[0], transformedCoords[1]);
 
-      for (let i = 3; i < transformedCoords.length; i += 3) {
-        g.lineTo(transformedCoords[i], transformedCoords[i+1]);
-      }
+      lines.forEach(function(line){
+        g.moveTo(line[0], line[1]);
+
+        for (let i = 3; i < line.length; i += 3) {
+          g.lineTo(line[i], line[i+1]);
+        }
+      });
 
       g.stroke();
+
     },
 
     /**

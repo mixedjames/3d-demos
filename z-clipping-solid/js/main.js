@@ -17,48 +17,47 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * main.js draws a spinning cube using the renderer.js module
- *
- */
-
 define([
-  'renderer',
-  'glMatrix'
-], function(Renderer, glMatrix){
+  'glMatrix',
+  'renderer'
+], function(GLM, Renderer){
 
-  const vec3 = glMatrix.vec3;
-  const mat4 = glMatrix.mat4;
-  const DEGREES_TO_RADIANS = Math.PI/180;
+  const glMatrix = GLM.glMatrix;
+  const mat4 = GLM.mat4;
 
   const r = new Renderer(document.getElementById('canvas'));
 
   const cube = [
-    /* front face */ [-1,-1,-1,  -1,1,-1,  1,1,-1,  1,-1,-1,  -1,-1,-1],
-    /* back face */ [-1,-1,1,  -1,1,1,  1,1,1,  1,-1,1,  -1,-1,1],
-    /* sides */
-      [1,1,-1,  1, 1,1],
-      [-1,1,-1,  -1,1,1],
-      [-1,-1,-1,  -1,-1,1],
-      [1,-1,-1,  1,-1,1]
+    /* front */ [-1,-1,-1, -1,1,-1, 1,1,-1, 1,-1,-1],
+    /* back */  [-1,-1,1, 1,-1,1, 1,1,1, -1,1,1],
+    /* left */  [-1,-1,-1, -1,-1,1, -1,1,1, -1,1,-1],
+    /* right */ [1,-1,-1, 1,1,-1, 1,1,1, 1,-1,1],
+    /* top */   [-1,1,-1, -1,1,1, 1,1,1, 1,1,-1],
+    /* bottom */[-1,-1,-1, 1,-1,-1, 1,-1,1, -1,-1,1]
   ];
 
+  cube[0].color = 'red';
+  cube[1].color = 'blue';
+  cube[2].color = 'purple';
+  cube[3].color = 'green';
+  cube[4].color = 'grey';
+  cube[5].color = 'yellow';
+
   const t0 = performance.now();
-  let angle = 0;
+  Animate(t0);
 
-  requestAnimationFrame(Animate);
+  function Animate(t) {
 
-  function Animate(time) {
-
-    const dT = time - t0;
-    angle = dT * 0.1;
+    const dT = t - t0;
+    const angle = dT * 0.1;
 
     mat4.identity(r.transform);
-    mat4.translate(r.transform, r.transform, [0, 0, 5]);
-    mat4.rotateX(r.transform, r.transform, angle * DEGREES_TO_RADIANS);
+    mat4.translate(r.transform, r.transform, [0,0,2.5 + Math.sin(dT/1000)]);
+    mat4.rotateX(r.transform, r.transform, glMatrix.toRadian(angle));
+    mat4.rotateY(r.transform, r.transform, glMatrix.toRadian(45));
 
     r.Clear();
-    r.DrawPolyLines(cube);
+    r.DrawQuadsWithCulling(cube);
 
     requestAnimationFrame(Animate);
   }

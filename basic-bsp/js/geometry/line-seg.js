@@ -17,27 +17,31 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
- * DO NOT WORRY TOO MUCH ABOUT THIS FILE - IT'S JUST A LOAD OF BOILERPLATE CODE
- *
- * All it does is:
- *   - Set up RequireJS with all the right libraries
- *   - Loads main.js once we're done
- */
+define([],function(){
 
-requirejs.config({
-  baseUrl: 'js',
+  function LineSeg(a, b) {
+    this.a = [a[0], a[1]];
+    this.b = [b[0], b[1]];
+  }
 
-  paths: {
-    'glMatrix': '../lib/glMatrix/gl-matrix'
-  },
-  packages: []
-});
+  LineSeg.prototype = {
+    Length: function() {
+      var dx = this.b[0] - this.a[0];
+      var dy = this.b[0] - this.b[0];
+      return Math.sqrt(dx*dx + dy*dy);
+    },
 
-requirejs([
-],
-function() {
+    Midpoint: function() {
+      return LineSeg.Midpoint(this.a, this.b);
+    }
+  };
 
-  require(['main']);
+  LineSeg.Midpoint = function(a, b) {
+    return [
+      a[0] + (b[0] - a[0])/2,
+      a[1] + (b[1] - a[1])/2
+    ];
+  };
 
+  return LineSeg;
 });
